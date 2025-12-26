@@ -1161,7 +1161,7 @@ section,
 }
 
 .menu .tab-content .menu-item .menu-img {
-  padding: 0 60px;
+  padding: 0 20px;
   margin-bottom: 15px;
 }
 
@@ -1533,6 +1533,12 @@ section,
   text-align: center;
 }
 
+.gallery .swiper-slide img {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+}
+
 @media (min-width: 992px) {
   .gallery .swiper-wrapper {
     padding: 40px 0;
@@ -1543,7 +1549,7 @@ section,
     border: 6px solid var(--accent-color);
     padding: 4px;
     z-index: 1;
-    transform: scale(1.2);
+    transform: scale(1.3);
     transition: none;
   }
 }

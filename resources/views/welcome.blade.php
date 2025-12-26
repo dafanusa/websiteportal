@@ -506,6 +506,12 @@
     <!-- Events Section -->
     <section id="events" class="events section">
 
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>EVENTS</h2>
+        <p><span>Acara</span> <span class="description-title">Spesial Samawa</span></p>
+      </div><!-- End Section Title -->
+
       <div class="container-fluid" data-aos="fade-up" data-aos-delay="100">
 
         <div class="swiper init-swiper">
@@ -535,39 +541,23 @@
             }
           </script>
           <div class="swiper-wrapper">
-
-            <div class="swiper-slide event-item d-flex flex-column justify-content-end" style="background-image: url(assets/img/events-1.jpg)">
-              <h3>Custom Parties</h3>
-              <div class="price align-self-start">$99</div>
-              <p class="description">
-                Quo corporis voluptas ea ad. Consectetur inventore sapiente ipsum voluptas eos omnis facere. Enim facilis veritatis id est rem repudiandae nulla expedita quas.
-              </p>
-            </div><!-- End Event item -->
-
-            <div class="swiper-slide event-item d-flex flex-column justify-content-end" style="background-image: url(assets/img/events-2.jpg)">
-              <h3>Private Parties</h3>
-              <div class="price align-self-start">$289</div>
-              <p class="description">
-                In delectus sint qui et enim. Et ab repudiandae inventore quaerat doloribus. Facere nemo vero est ut dolores ea assumenda et. Delectus saepe accusamus aspernatur.
-              </p>
-            </div><!-- End Event item -->
-
-            <div class="swiper-slide event-item d-flex flex-column justify-content-end" style="background-image: url(assets/img/events-3.jpg)">
-              <h3>Birthday Parties</h3>
-              <div class="price align-self-start">$499</div>
-              <p class="description">
-                Laborum aperiam atque omnis minus omnis est qui assumenda quos. Quis id sit quibusdam. Esse quisquam ducimus officia ipsum ut quibusdam maxime. Non enim perspiciatis.
-              </p>
-            </div><!-- End Event item -->
-
-            <div class="swiper-slide event-item d-flex flex-column justify-content-end" style="background-image: url(assets/img/events-4.jpg)">
-              <h3>Wedding Parties</h3>
-              <div class="price align-self-start">$899</div>
-              <p class="description">
-                Laborum aperiam atque omnis minus omnis est qui assumenda quos. Quis id sit quibusdam. Esse quisquam ducimus officia ipsum ut quibusdam maxime. Non enim perspiciatis.
-              </p>
-            </div><!-- End Event item -->
-
+            @foreach ($events as $event)
+              @php
+                $image = $event->image_path ?: 'assets/img/events-1.jpg';
+                if (!\Illuminate\Support\Str::startsWith($image, ['assets/', 'http://', 'https://', '/'])) {
+                  $image = \Illuminate\Support\Facades\Storage::url($image);
+                }
+              @endphp
+              <div class="swiper-slide event-item d-flex flex-column justify-content-end" style="background-image: url({{ $image }})">
+                <h3>{{ $event->title }}</h3>
+                @if ($event->price_label)
+                  <div class="price align-self-start">{{ $event->price_label }}</div>
+                @endif
+                <p class="description">
+                  {{ $event->description }}
+                </p>
+              </div><!-- End Event item -->
+            @endforeach
           </div>
           <div class="swiper-pagination"></div>
         </div>
@@ -587,58 +577,28 @@
       <div class="container">
 
         <div class="row gy-4">
-
-         <!-- Tokoh 1 -->
-    <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="fade-up">
-      <div class="chef-member">
-        <div class="member-img">
-          <img src="assets/img/chefs/chefs-1.jpg" class="img-fluid" alt="">
-        </div>
-        <div class="member-info">
-          <h4>Bapak Alex</h4>
-          <span>Singang & Masakan Tradisional</span>
-          <p>
-            Pelaku kuliner tradisional yang telah menjaga resep Singang
-            khas Sumbawa secara turun-temurun.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tokoh 2 -->
-    <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="100">
-      <div class="chef-member">
-        <div class="member-img">
-          <img src="assets/img/chefs/chefs-3.jpg" class="img-fluid" alt="">
-        </div>
-        <div class="member-info">
-          <h4>Bapak Muhammad</h4>
-          <span>Sepat & Olahan Ikan</span>
-          <p>
-            UMKM kuliner yang mengembangkan olahan ikan khas Sumbawa
-            dengan cita rasa autentik.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tokoh 3 -->
-    <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="200">
-      <div class="chef-member">
-        <div class="member-img">
-          <img src="assets/img/chefs/chefs-2.jpg" class="img-fluid" alt="">
-        </div>
-        <div class="member-info">
-          <h4>Neng Arum</h4>
-          <span>Jajanan & Kuliner Modern Lokal</span>
-          <p>
-            Pelaku UMKM muda yang memadukan kuliner khas Sumbawa
-            dengan sentuhan modern.
-          </p>
-        </div>
-      </div>
-    </div>
-
+          @foreach ($umkms as $umkm)
+            @php
+              $image = $umkm->image_path ?: 'assets/img/chefs/chefs-1.jpg';
+              if (!\Illuminate\Support\Str::startsWith($image, ['assets/', 'http://', 'https://', '/'])) {
+                $image = \Illuminate\Support\Facades\Storage::url($image);
+              }
+            @endphp
+            <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
+              <div class="chef-member">
+                <div class="member-img">
+                  <img src="{{ $image }}" class="img-fluid" alt="{{ $umkm->name }}">
+                </div>
+                <div class="member-info">
+                  <h4>{{ $umkm->name }}</h4>
+                  <span>{{ $umkm->specialty }}</span>
+                  <p>
+                    {{ $umkm->description }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          @endforeach
         </div>
 
       </div>
@@ -690,14 +650,19 @@
             }
           </script>
           <div class="swiper-wrapper align-items-center">
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery" href="assets/img/gallery/gallery-1.jpg"><img src="assets/img/gallery/gallery-1.jpg" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery" href="assets/img/gallery/gallery-2.jpg"><img src="assets/img/gallery/gallery-2.jpg" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery" href="assets/img/gallery/gallery-3.jpg"><img src="assets/img/gallery/gallery-3.jpg" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery" href="assets/img/gallery/gallery-4.jpg"><img src="assets/img/gallery/gallery-4.jpg" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery" href="assets/img/gallery/gallery-5.jpg"><img src="assets/img/gallery/gallery-5.jpg" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery" href="assets/img/gallery/gallery-6.jpg"><img src="assets/img/gallery/gallery-6.jpg" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery" href="assets/img/gallery/gallery-7.jpg"><img src="assets/img/gallery/gallery-7.jpg" class="img-fluid" alt=""></a></div>
-            <div class="swiper-slide"><a class="glightbox" data-gallery="images-gallery" href="assets/img/gallery/gallery-8.jpg"><img src="assets/img/gallery/gallery-8.jpg" class="img-fluid" alt=""></a></div>
+            @foreach ($galleries as $gallery)
+              @php
+                $image = $gallery->image_path ?: 'assets/img/gallery/gallery-1.jpg';
+                if (!\Illuminate\Support\Str::startsWith($image, ['assets/', 'http://', 'https://', '/'])) {
+                  $image = \Illuminate\Support\Facades\Storage::url($image);
+                }
+              @endphp
+              <div class="swiper-slide">
+                <a class="glightbox" data-gallery="images-gallery" href="{{ $image }}">
+                  <img src="{{ $image }}" class="img-fluid" alt="{{ $gallery->title ?? 'Gallery' }}">
+                </a>
+              </div>
+            @endforeach
           </div>
           <div class="swiper-pagination"></div>
         </div>

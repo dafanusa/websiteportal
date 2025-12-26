@@ -24,5 +24,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call(AdminUserSeeder::class);
         $this->call(MenuSeeder::class);
+        $this->call(UmkmSeeder::class);
+        $this->call(EventSeeder::class);
+        $this->call(GallerySeeder::class);
     }
 }

@@ -2,12 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreEventRequest;
+use App\Http\Requests\StoreGalleryRequest;
 use App\Http\Requests\StoreMenuCategoryRequest;
 use App\Http\Requests\StoreMenuItemRequest;
+use App\Http\Requests\StoreUmkmRequest;
+use App\Http\Requests\UpdateEventRequest;
+use App\Http\Requests\UpdateGalleryRequest;
 use App\Http\Requests\UpdateMenuCategoryRequest;
 use App\Http\Requests\UpdateMenuItemRequest;
+use App\Http\Requests\UpdateUmkmRequest;
+use App\Models\Event;
+use App\Models\Gallery;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
+use App\Models\Umkm;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
@@ -27,9 +36,27 @@ class AdminMenuController extends Controller
             ->orderBy('sort_order')
             ->get();
 
+        $umkms = Umkm::query()
+            ->orderBy('sort_order')
+            ->latest()
+            ->get();
+
+        $events = Event::query()
+            ->orderBy('sort_order')
+            ->latest()
+            ->get();
+
+        $galleries = Gallery::query()
+            ->orderBy('sort_order')
+            ->latest()
+            ->get();
+
         return response()->view('admin.dashboard', [
             'categories' => $categories,
             'items' => $items,
+            'umkms' => $umkms,
+            'events' => $events,
+            'galleries' => $galleries,
         ]);
     }
 
@@ -174,5 +201,192 @@ class AdminMenuController extends Controller
         return redirect()
             ->back()
             ->with('status', 'Menu berhasil dihapus.');
+    }
+
+    public function storeUmkm(StoreUmkmRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        $imagePath = null;
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('umkms', 'public');
+        }
+
+        Umkm::create([
+            'name' => $validated['name'],
+            'specialty' => $validated['specialty'],
+            'description' => $validated['description'] ?? null,
+            'image_path' => $imagePath,
+            'sort_order' => $validated['sort_order'] ?? 0,
+            'is_active' => $request->boolean('is_active'),
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('status', 'UMKM berhasil ditambahkan.');
+    }
+
+    public function updateUmkm(UpdateUmkmRequest $request, Umkm $umkm): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        $imagePath = $umkm->image_path;
+
+        if ($request->hasFile('image')) {
+            if ($imagePath && ! Str::startsWith($imagePath, ['assets/', 'http://', 'https://', '/'])) {
+                Storage::disk('public')->delete($imagePath);
+            }
+
+            $imagePath = $request->file('image')->store('umkms', 'public');
+        }
+
+        $umkm->update([
+            'name' => $validated['name'],
+            'specialty' => $validated['specialty'],
+            'description' => $validated['description'] ?? null,
+            'image_path' => $imagePath,
+            'sort_order' => $validated['sort_order'] ?? 0,
+            'is_active' => $request->boolean('is_active'),
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('status', 'UMKM berhasil diperbarui.');
+    }
+
+    public function destroyUmkm(Umkm $umkm): RedirectResponse
+    {
+        if ($umkm->image_path && ! Str::startsWith($umkm->image_path, ['assets/', 'http://', 'https://', '/'])) {
+            Storage::disk('public')->delete($umkm->image_path);
+        }
+
+        $umkm->delete();
+
+        return redirect()
+            ->back()
+            ->with('status', 'UMKM berhasil dihapus.');
+    }
+
+    public function storeEvent(StoreEventRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        $imagePath = null;
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('events', 'public');
+        }
+
+        Event::create([
+            'title' => $validated['title'],
+            'price_label' => $validated['price_label'] ?? null,
+            'description' => $validated['description'] ?? null,
+            'image_path' => $imagePath,
+            'sort_order' => $validated['sort_order'] ?? 0,
+            'is_active' => $request->boolean('is_active'),
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('status', 'Event berhasil ditambahkan.');
+    }
+
+    public function updateEvent(UpdateEventRequest $request, Event $event): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        $imagePath = $event->image_path;
+
+        if ($request->hasFile('image')) {
+            if ($imagePath && ! Str::startsWith($imagePath, ['assets/', 'http://', 'https://', '/'])) {
+                Storage::disk('public')->delete($imagePath);
+            }
+
+            $imagePath = $request->file('image')->store('events', 'public');
+        }
+
+        $event->update([
+            'title' => $validated['title'],
+            'price_label' => $validated['price_label'] ?? null,
+            'description' => $validated['description'] ?? null,
+            'image_path' => $imagePath,
+            'sort_order' => $validated['sort_order'] ?? 0,
+            'is_active' => $request->boolean('is_active'),
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('status', 'Event berhasil diperbarui.');
+    }
+
+    public function destroyEvent(Event $event): RedirectResponse
+    {
+        if ($event->image_path && ! Str::startsWith($event->image_path, ['assets/', 'http://', 'https://', '/'])) {
+            Storage::disk('public')->delete($event->image_path);
+        }
+
+        $event->delete();
+
+        return redirect()
+            ->back()
+            ->with('status', 'Event berhasil dihapus.');
+    }
+
+    public function storeGallery(StoreGalleryRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        $imagePath = $request->file('image')->store('galleries', 'public');
+
+        Gallery::create([
+            'title' => $validated['title'] ?? null,
+            'image_path' => $imagePath,
+            'sort_order' => $validated['sort_order'] ?? 0,
+            'is_active' => $request->boolean('is_active'),
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('status', 'Gallery berhasil ditambahkan.');
+    }
+
+    public function updateGallery(UpdateGalleryRequest $request, Gallery $gallery): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        $imagePath = $gallery->image_path;
+
+        if ($request->hasFile('image')) {
+            if ($imagePath && ! Str::startsWith($imagePath, ['assets/', 'http://', 'https://', '/'])) {
+                Storage::disk('public')->delete($imagePath);
+            }
+
+            $imagePath = $request->file('image')->store('galleries', 'public');
+        }
+
+        $gallery->update([
+            'title' => $validated['title'] ?? null,
+            'image_path' => $imagePath,
+            'sort_order' => $validated['sort_order'] ?? 0,
+            'is_active' => $request->boolean('is_active'),
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('status', 'Gallery berhasil diperbarui.');
+    }
+
+    public function destroyGallery(Gallery $gallery): RedirectResponse
+    {
+        if ($gallery->image_path && ! Str::startsWith($gallery->image_path, ['assets/', 'http://', 'https://', '/'])) {
+            Storage::disk('public')->delete($gallery->image_path);
+        }
+
+        $gallery->delete();
+
+        return redirect()
+            ->back()
+            ->with('status', 'Gallery berhasil dihapus.');
     }
 }

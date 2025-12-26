@@ -45,4 +45,16 @@ Route::middleware(['jwt.web', 'role:admin'])->group(function () {
     Route::post('/dashboard/items', [AdminMenuController::class, 'storeItem'])->name('dashboard.items.store');
     Route::put('/dashboard/items/{item}', [AdminMenuController::class, 'updateItem'])->name('dashboard.items.update');
     Route::delete('/dashboard/items/{item}', [AdminMenuController::class, 'destroyItem'])->name('dashboard.items.destroy');
+
+    Route::post('/dashboard/umkms', [AdminMenuController::class, 'storeUmkm'])->name('dashboard.umkms.store');
+    Route::put('/dashboard/umkms/{umkm}', [AdminMenuController::class, 'updateUmkm'])->name('dashboard.umkms.update');
+    Route::delete('/dashboard/umkms/{umkm}', [AdminMenuController::class, 'destroyUmkm'])->name('dashboard.umkms.destroy');
+
+    Route::post('/dashboard/events', [AdminMenuController::class, 'storeEvent'])->name('dashboard.events.store');
+    Route::put('/dashboard/events/{event}', [AdminMenuController::class, 'updateEvent'])->name('dashboard.events.update');
+    Route::delete('/dashboard/events/{event}', [AdminMenuController::class, 'destroyEvent'])->name('dashboard.events.destroy');
+
+    Route::post('/dashboard/galleries', [AdminMenuController::class, 'storeGallery'])->name('dashboard.galleries.store');
+    Route::put('/dashboard/galleries/{gallery}', [AdminMenuController::class, 'updateGallery'])->name('dashboard.galleries.update');
+    Route::delete('/dashboard/galleries/{gallery}', [AdminMenuController::class, 'destroyGallery'])->name('dashboard.galleries.destroy');
 });
