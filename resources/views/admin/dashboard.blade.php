@@ -24,6 +24,9 @@
         <button id="nav-gallery" onclick="showSection('gallery')" class="w-full text-left px-4 py-3 rounded-xl text-slate-700 hover:bg-maroon hover:text-white transition duration-300">
           Gallery
         </button>
+        <button id="nav-testimoni" onclick="showSection('testimoni')" class="w-full text-left px-4 py-3 rounded-xl text-slate-700 hover:bg-maroon hover:text-white transition duration-300">
+          Testimoni
+        </button>
       </nav>
       <div class="px-4 pb-4">
         <form method="POST" action="{{ route('logout') }}">
@@ -286,6 +289,41 @@
           @endforelse
         </div>
       </section>
+
+      <section id="section-testimoni" class="mt-10 hidden space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <h2 class="text-2xl font-semibold text-slate-800">Testimoni</h2>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          @forelse ($testimonials as $testimonial)
+            @php
+              $image = $testimonial->photo_path ?: 'assets/img/testimonials/testimonials-1.jpg';
+              if (!\Illuminate\Support\Str::startsWith($image, ['assets/', 'http://', 'https://', '/'])) {
+                $image = \Illuminate\Support\Facades\Storage::url($image);
+              }
+            @endphp
+            <div class="bg-white rounded-2xl shadow-md p-4 flex flex-col items-center text-center transition duration-300 hover:shadow-lg">
+              <div class="w-20 h-20 mb-4 rounded-full overflow-hidden border border-gray-100">
+                <img src="{{ $image }}" alt="{{ $testimonial->name }}" class="w-full h-full object-cover">
+              </div>
+              <h3 class="font-semibold text-lg text-maroon">{{ $testimonial->name }}</h3>
+              <p class="text-sm text-gray-600 mt-2 mb-4">{{ $testimonial->content }}</p>
+              <div class="flex items-center gap-1 text-amber-500 mb-4">
+                @for ($i = 0; $i < ($testimonial->rating ?? 5); $i++)
+                  <i class="bi bi-star-fill"></i>
+                @endfor
+              </div>
+              <form id="delete-testimonial-{{ $testimonial->id }}" method="POST" action="{{ route('dashboard.testimonials.destroy', $testimonial) }}">
+                @csrf
+                @method('DELETE')
+                <button type="button" onclick="openConfirm('Hapus testimoni', 'Hapus testimoni ini?', 'delete-testimonial-{{ $testimonial->id }}')" class="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition">Hapus</button>
+              </form>
+            </div>
+          @empty
+            <div class="bg-white rounded-2xl shadow p-6 text-center text-gray-500">Belum ada testimoni.</div>
+          @endforelse
+        </div>
+      </section>
     </main>
   </div>
 
@@ -424,7 +462,7 @@
 @push('scripts')
 <script>
   function showSection(type) {
-    ['menu', 'kategori', 'umkm', 'event', 'gallery'].forEach(section => {
+    ['menu', 'kategori', 'umkm', 'event', 'gallery', 'testimoni'].forEach(section => {
       const target = document.getElementById('section-' + section);
       if (target) {
         target.classList.toggle('hidden', section !== type);
@@ -437,6 +475,7 @@
       umkm: document.getElementById('nav-umkm'),
       event: document.getElementById('nav-event'),
       gallery: document.getElementById('nav-gallery'),
+      testimoni: document.getElementById('nav-testimoni'),
     };
 
     Object.entries(navButtons).forEach(([key, button]) => {

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminMenuController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,10 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:register');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::post('/testimonials', [TestimonialController::class, 'store'])
+    ->middleware('jwt.web')
+    ->name('testimonials.store');
+
 Route::middleware(['jwt.web', 'role:admin'])->group(function () {
     Route::get('/dashboard', [AdminMenuController::class, 'dataItems'])->name('dashboard');
     Route::post('/dashboard/categories', [AdminMenuController::class, 'storeCategory'])->name('dashboard.categories.store');
@@ -57,4 +62,7 @@ Route::middleware(['jwt.web', 'role:admin'])->group(function () {
     Route::post('/dashboard/galleries', [AdminMenuController::class, 'storeGallery'])->name('dashboard.galleries.store');
     Route::put('/dashboard/galleries/{gallery}', [AdminMenuController::class, 'updateGallery'])->name('dashboard.galleries.update');
     Route::delete('/dashboard/galleries/{gallery}', [AdminMenuController::class, 'destroyGallery'])->name('dashboard.galleries.destroy');
+
+    Route::delete('/dashboard/testimonials/{testimonial}', [AdminMenuController::class, 'destroyTestimonial'])
+        ->name('dashboard.testimonials.destroy');
 });

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\Gallery;
 use App\Models\MenuCategory;
+use App\Models\Testimonial;
 use App\Models\Umkm;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -51,12 +52,19 @@ class WelcomeController extends Controller
             ->orderBy('sort_order')
             ->get();
 
+        $testimonials = Testimonial::query()
+            ->with('user')
+            ->latest()
+            ->take(8)
+            ->get();
+
         return response()->view('welcome', [
             'menuCategories' => $categories,
             'authUser' => $authUser,
             'umkms' => $umkms,
             'events' => $events,
             'galleries' => $galleries,
+            'testimonials' => $testimonials,
         ]);
     }
 }

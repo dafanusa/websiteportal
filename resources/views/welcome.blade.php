@@ -398,103 +398,53 @@
             }
           </script>
           <div class="swiper-wrapper">
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <div class="row gy-4 justify-content-center">
-                  <div class="col-lg-6">
-                    <div class="testimonial-content">
-                      <p>
-                        <i class="bi bi-quote quote-icon-left"></i>
-                        <span>Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper.</span>
-                        <i class="bi bi-quote quote-icon-right"></i>
-                      </p>
-                      <h3>Saul Goodman</h3>
-                      <h4>Ceo &amp; Founder</h4>
-                      <div class="stars">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            @forelse ($testimonials as $testimonial)
+              @php
+                $image = $testimonial->photo_path ?: 'assets/img/testimonials/testimonials-1.jpg';
+                if (!\Illuminate\Support\Str::startsWith($image, ['assets/', 'http://', 'https://', '/'])) {
+                  $image = \Illuminate\Support\Facades\Storage::url($image);
+                }
+              @endphp
+              <div class="swiper-slide">
+                <div class="testimonial-item">
+                  <div class="row gy-4 justify-content-center">
+                    <div class="col-lg-6">
+                      <div class="testimonial-content">
+                        <p>
+                          <i class="bi bi-quote quote-icon-left"></i>
+                          <span>{{ $testimonial->content }}</span>
+                          <i class="bi bi-quote quote-icon-right"></i>
+                        </p>
+                        <h3>{{ $testimonial->name }}</h3>
+                        <h4>Pengunjung</h4>
+                        <div class="stars">
+                          @for ($i = 0; $i < ($testimonial->rating ?? 5); $i++)
+                            <i class="bi bi-star-fill"></i>
+                          @endfor
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 text-center">
+                      <div class="testimonial-avatar">
+                        <img src="{{ $image }}" class="img-fluid testimonial-img" alt="{{ $testimonial->name }}">
                       </div>
                     </div>
                   </div>
-                  <div class="col-lg-2 text-center">
-                    <img src="assets/img/testimonials/testimonials-1.jpg" class="img-fluid testimonial-img" alt="">
-                  </div>
                 </div>
-              </div>
-            </div><!-- End testimonial item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <div class="row gy-4 justify-content-center">
-                  <div class="col-lg-6">
-                    <div class="testimonial-content">
-                      <p>
-                        <i class="bi bi-quote quote-icon-left"></i>
-                        <span>Export tempor illum tamen malis malis eram quae irure esse labore quem cillum quid cillum eram malis quorum velit fore eram velit sunt aliqua noster fugiat irure amet legam anim culpa.</span>
-                        <i class="bi bi-quote quote-icon-right"></i>
-                      </p>
-                      <h3>Sara Wilsson</h3>
-                      <h4>Designer</h4>
-                      <div class="stars">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+              </div><!-- End testimonial item -->
+            @empty
+              <div class="swiper-slide">
+                <div class="testimonial-item">
+                  <div class="row gy-4 justify-content-center">
+                    <div class="col-lg-8">
+                      <div class="testimonial-content text-center">
+                        <p>Belum ada testimoni. Jadilah yang pertama berbagi cerita!</p>
                       </div>
                     </div>
                   </div>
-                  <div class="col-lg-2 text-center">
-                    <img src="assets/img/testimonials/testimonials-2.jpg" class="img-fluid testimonial-img" alt="">
-                  </div>
                 </div>
               </div>
-            </div><!-- End testimonial item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <div class="row gy-4 justify-content-center">
-                  <div class="col-lg-6">
-                    <div class="testimonial-content">
-                      <p>
-                        <i class="bi bi-quote quote-icon-left"></i>
-                        <span>Enim nisi quem export duis labore cillum quae magna enim sint quorum nulla quem veniam duis minim tempor labore quem eram duis noster aute amet eram fore quis sint minim.</span>
-                        <i class="bi bi-quote quote-icon-right"></i>
-                      </p>
-                      <h3>Jena Karlis</h3>
-                      <h4>Store Owner</h4>
-                      <div class="stars">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-2 text-center">
-                    <img src="assets/img/testimonials/testimonials-3.jpg" class="img-fluid testimonial-img" alt="">
-                  </div>
-                </div>
-              </div>
-            </div><!-- End testimonial item -->
-
-            <div class="swiper-slide">
-              <div class="testimonial-item">
-                <div class="row gy-4 justify-content-center">
-                  <div class="col-lg-6">
-                    <div class="testimonial-content">
-                      <p>
-                        <i class="bi bi-quote quote-icon-left"></i>
-                        <span>Fugiat enim eram quae cillum dolore dolor amet nulla culpa multos export minim fugiat minim velit minim dolor enim duis veniam ipsum anim magna sunt elit fore quem dolore labore illum veniam.</span>
-                        <i class="bi bi-quote quote-icon-right"></i>
-                      </p>
-                      <h3>John Larson</h3>
-                      <h4>Entrepreneur</h4>
-                      <div class="stars">
-                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-lg-2 text-center">
-                    <img src="assets/img/testimonials/testimonials-4.jpg" class="img-fluid testimonial-img" alt="">
-                  </div>
-                </div>
-              </div>
-            </div><!-- End testimonial item -->
-
+            @endforelse
           </div>
           <div class="swiper-pagination"></div>
         </div>
@@ -763,6 +713,63 @@
       </div>
 
     </section><!-- /Contact Section -->
+
+    <!-- Testimonial Form Section -->
+    <section id="testimonial-form" class="section light-background">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>TESTIMONI</h2>
+        <p><span>Bagikan</span> <span class="description-title">Pengalamanmu</span></p>
+      </div>
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        @if (session('testimonial_status'))
+          <div class="mb-4 alert alert-success">
+            {{ session('testimonial_status') }}
+          </div>
+        @endif
+
+        @if ($errors->any())
+          <div class="mb-4 alert alert-danger">
+            <ul class="mb-0">
+              @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+              @endforeach
+            </ul>
+          </div>
+        @endif
+
+        @if ($authUser)
+          <form action="{{ route('testimonials.store') }}" method="post" class="row gy-4" enctype="multipart/form-data">
+            @csrf
+            <div class="col-md-6">
+              <input type="text" name="name" class="form-control" placeholder="Nama" value="{{ old('name', $authUser->name) }}" required>
+            </div>
+            <div class="col-md-6">
+              <select name="rating" class="form-control" required>
+                <option value="">Pilih Rating</option>
+                @for ($star = 5; $star >= 1; $star--)
+                  <option value="{{ $star }}" @selected(old('rating') == $star)>{{ $star }} Bintang</option>
+                @endfor
+              </select>
+            </div>
+            <div class="col-12">
+              <textarea name="content" class="form-control" rows="5" placeholder="Tulis testimoni kamu..." required>{{ old('content') }}</textarea>
+            </div>
+            <div class="col-12">
+              <input type="file" name="photo" class="form-control">
+            </div>
+            <div class="col-12 text-center">
+              <button type="submit" class="btn-get-started">Kirim Testimoni</button>
+            </div>
+          </form>
+        @else
+          <div class="text-center">
+            <p class="mb-3">Silakan login untuk memberikan testimoni.</p>
+            <a href="{{ route('login') }}" class="btn-get-started">Login</a>
+          </div>
+        @endif
+      </div>
+    </section><!-- /Testimonial Form Section -->
 
   </main>
 

@@ -16,6 +16,7 @@ use App\Models\Event;
 use App\Models\Gallery;
 use App\Models\MenuCategory;
 use App\Models\MenuItem;
+use App\Models\Testimonial;
 use App\Models\Umkm;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
@@ -51,12 +52,18 @@ class AdminMenuController extends Controller
             ->latest()
             ->get();
 
+        $testimonials = Testimonial::query()
+            ->with('user')
+            ->latest()
+            ->get();
+
         return response()->view('admin.dashboard', [
             'categories' => $categories,
             'items' => $items,
             'umkms' => $umkms,
             'events' => $events,
             'galleries' => $galleries,
+            'testimonials' => $testimonials,
         ]);
     }
 
@@ -388,5 +395,18 @@ class AdminMenuController extends Controller
         return redirect()
             ->back()
             ->with('status', 'Gallery berhasil dihapus.');
+    }
+
+    public function destroyTestimonial(Testimonial $testimonial): RedirectResponse
+    {
+        if ($testimonial->photo_path && ! Str::startsWith($testimonial->photo_path, ['assets/', 'http://', 'https://', '/'])) {
+            Storage::disk('public')->delete($testimonial->photo_path);
+        }
+
+        $testimonial->delete();
+
+        return redirect()
+            ->back()
+            ->with('status', 'Testimoni berhasil dihapus.');
     }
 }
