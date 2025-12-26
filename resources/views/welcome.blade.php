@@ -78,7 +78,12 @@
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="btn-getstarted" href="{{ route('login') }}">Login/Register</a>
+      <div class="d-flex align-items-center gap-3">
+        @if ($authUser)
+          <span class="fw-semibold text-dark d-none d-md-inline">Hi, {{ $authUser->name }}</span>
+        @endif
+        <a class="btn-getstarted" href="{{ route('login') }}">Login/Register</a>
+      </div>
 
     </div>
   </header>
