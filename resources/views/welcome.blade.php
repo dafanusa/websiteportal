@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Cita Rasa Samawa - Asli Khas Daerah Sumbawa</title>
+  <title>Cita Rasa Samawa</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 
@@ -44,7 +44,7 @@
       <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
         <!-- Uncomment the line below if you also wish to use an image logo -->
         <!-- <img src="assets/img/logo.png" alt=""> -->
-        <h1 class="sitename">Cita Rasa Sumbawa</h1>
+        <h1 class="sitename">Cita Rasa Samawa</h1>
         <span>.</span>
       </a>
 
@@ -54,7 +54,7 @@
           <li><a href="#about">About</a></li>
           <li><a href="#menu">Menu</a></li>
           <li><a href="#events">Events</a></li>
-          <li><a href="#chefs">Chefs</a></li>
+          <li><a href="#chefs">UMKM</a></li>
           <li><a href="#gallery">Gallery</a></li>
           <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
             <ul>
@@ -78,7 +78,7 @@
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="btn-getstarted" href="index.html#book-a-table">View Menu</a>
+      <a class="btn-getstarted" href="index.html#Login-Register">Login/Register</a>
 
     </div>
   </header>
@@ -419,7 +419,7 @@
 
             <div class="tab-header text-center">
               <p>Menu</p>
-              <h3>Breakfast</h3>
+              <h3>Sarapan</h3>
             </div>
 
             <div class="row gy-5">
@@ -497,7 +497,7 @@
 
             <div class="tab-header text-center">
               <p>Menu</p>
-              <h3>Lunch</h3>
+              <h3>Hidangan Utama</h3>
             </div>
 
             <div class="row gy-5">
@@ -575,7 +575,7 @@
 
             <div class="tab-header text-center">
               <p>Menu</p>
-              <h3>Dinner</h3>
+              <h3>Menu Spesial</h3>
             </div>
 
             <div class="row gy-5">
@@ -880,7 +880,7 @@
           <img src="assets/img/chefs/chefs-1.jpg" class="img-fluid" alt="">
         </div>
         <div class="member-info">
-          <h4>Ibu Sariyah</h4>
+          <h4>Bapak Alex</h4>
           <span>Singang & Masakan Tradisional</span>
           <p>
             Pelaku kuliner tradisional yang telah menjaga resep Singang
@@ -897,7 +897,7 @@
           <img src="assets/img/chefs/chefs-3.jpg" class="img-fluid" alt="">
         </div>
         <div class="member-info">
-          <h4>Bapak Rahman</h4>
+          <h4>Bapak Muhammad</h4>
           <span>Sepat & Olahan Ikan</span>
           <p>
             UMKM kuliner yang mengembangkan olahan ikan khas Sumbawa
@@ -914,7 +914,7 @@
           <img src="assets/img/chefs/chefs-2.jpg" class="img-fluid" alt="">
         </div>
         <div class="member-info">
-          <h4>Mbak Lestari</h4>
+          <h4>Neng Arum</h4>
           <span>Jajanan & Kuliner Modern Lokal</span>
           <p>
             Pelaku UMKM muda yang memadukan kuliner khas Sumbawa
@@ -930,62 +930,7 @@
 
     </section><!-- /Chefs Section -->
 
-    <!-- Book A Table Section -->
-    <section id="book-a-table" class="book-a-table section">
 
-      <!-- Section Title -->
-      <div class="container section-title" data-aos="fade-up">
-        <h2>Book A Table</h2>
-        <p><span>Book Your</span> <span class="description-title">Stay With Us<br></span></p>
-      </div><!-- End Section Title -->
-
-      <div class="container">
-
-        <div class="row g-0" data-aos="fade-up" data-aos-delay="100">
-
-          <div class="col-lg-4 reservation-img" style="background-image: url(assets/img/reservation.jpg);"></div>
-
-          <div class="col-lg-8 d-flex align-items-center reservation-form-bg" data-aos="fade-up" data-aos-delay="200">
-            <form action="forms/book-a-table.php" method="post" role="form" class="php-email-form">
-              <div class="row gy-4">
-                <div class="col-lg-4 col-md-6">
-                  <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required="">
-                </div>
-                <div class="col-lg-4 col-md-6">
-                  <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required="">
-                </div>
-                <div class="col-lg-4 col-md-6">
-                  <input type="text" class="form-control" name="phone" id="phone" placeholder="Your Phone" required="">
-                </div>
-                <div class="col-lg-4 col-md-6">
-                  <input type="date" name="date" class="form-control" id="date" placeholder="Date" required="">
-                </div>
-                <div class="col-lg-4 col-md-6">
-                  <input type="time" class="form-control" name="time" id="time" placeholder="Time" required="">
-                </div>
-                <div class="col-lg-4 col-md-6">
-                  <input type="number" class="form-control" name="people" id="people" placeholder="# of people" required="">
-                </div>
-              </div>
-
-              <div class="form-group mt-3">
-                <textarea class="form-control" name="message" rows="5" placeholder="Message"></textarea>
-              </div>
-
-              <div class="text-center mt-3">
-                <div class="loading">Loading</div>
-                <div class="error-message"></div>
-                <div class="sent-message">Your booking request was sent. We will call back or send an Email to confirm your reservation. Thank you!</div>
-                <button type="submit">Book a Table</button>
-              </div>
-            </form>
-          </div><!-- End Reservation Form -->
-
-        </div>
-
-      </div>
-
-    </section><!-- /Book A Table Section -->
 
     <!-- Gallery Section -->
     <section id="gallery" class="gallery section light-background">
