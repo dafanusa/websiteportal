@@ -27,5 +27,8 @@ class DatabaseSeeder extends Seeder
         $this->call(UmkmSeeder::class);
         $this->call(EventSeeder::class);
         $this->call(GallerySeeder::class);
+        $this->call(SiteStatSeeder::class);
+        $this->call(WhySectionSeeder::class);
+        $this->call(WhyItemSeeder::class);
     }
 }

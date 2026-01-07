@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminMenuController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\InfoPageController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Http\Request;
@@ -31,6 +32,8 @@ $showWelcome = function (Request $request, WelcomeController $controller) {
 
 Route::get('/', $showWelcome)->name('welcome');
 Route::get('/welcome', WelcomeController::class);
+Route::get('/sejarah-kuliner', [InfoPageController::class, 'history'])->name('info.history');
+Route::get('/kuliner-khas', [InfoPageController::class, 'specialties'])->name('info.specialties');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
@@ -65,4 +68,23 @@ Route::middleware(['jwt.web', 'role:admin'])->group(function () {
 
     Route::delete('/dashboard/testimonials/{testimonial}', [AdminMenuController::class, 'destroyTestimonial'])
         ->name('dashboard.testimonials.destroy');
+
+    Route::put('/dashboard/favorites', [AdminMenuController::class, 'updateFavorites'])
+        ->name('dashboard.favorites.update');
+
+    Route::post('/dashboard/stats', [AdminMenuController::class, 'storeStat'])
+        ->name('dashboard.stats.store');
+    Route::put('/dashboard/stats', [AdminMenuController::class, 'updateStats'])
+        ->name('dashboard.stats.update');
+    Route::delete('/dashboard/stats/{stat}', [AdminMenuController::class, 'destroyStat'])
+        ->name('dashboard.stats.destroy');
+
+    Route::put('/dashboard/why-section', [AdminMenuController::class, 'updateWhySection'])
+        ->name('dashboard.why-section.update');
+    Route::post('/dashboard/why-items', [AdminMenuController::class, 'storeWhyItem'])
+        ->name('dashboard.why-items.store');
+    Route::put('/dashboard/why-items', [AdminMenuController::class, 'updateWhyItems'])
+        ->name('dashboard.why-items.update');
+    Route::delete('/dashboard/why-items/{whyItem}', [AdminMenuController::class, 'destroyWhyItem'])
+        ->name('dashboard.why-items.destroy');
 });

@@ -26,14 +26,6 @@
 
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
-
-  <!-- =======================================================
-  * Template Name: Yummy
-  * Template URL: https://bootstrapmade.com/yummy-bootstrap-restaurant-website-template/
-  * Updated: Aug 07 2024 with Bootstrap v5.3.3
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
 </head>
 
 <body class="index-page">
@@ -42,8 +34,6 @@
     <div class="container position-relative d-flex align-items-center justify-content-between">
 
       <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
-        <!-- Uncomment the line below if you also wish to use an image logo -->
-        <!-- <img src="assets/img/logo.png" alt=""> -->
         <h1 class="sitename">Cita Rasa Samawa</h1>
         <span>.</span>
       </a>
@@ -56,21 +46,10 @@
           <li><a href="#events">Events</a></li>
           <li><a href="#chefs">UMKM</a></li>
           <li><a href="#gallery">Gallery</a></li>
-          <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+          <li class="dropdown"><a href="#"><span>Informasi</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
             <ul>
-              <li><a href="#">Dropdown 1</a></li>
-              <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                <ul>
-                  <li><a href="#">Deep Dropdown 1</a></li>
-                  <li><a href="#">Deep Dropdown 2</a></li>
-                  <li><a href="#">Deep Dropdown 3</a></li>
-                  <li><a href="#">Deep Dropdown 4</a></li>
-                  <li><a href="#">Deep Dropdown 5</a></li>
-                </ul>
-              </li>
-              <li><a href="#">Dropdown 2</a></li>
-              <li><a href="#">Dropdown 3</a></li>
-              <li><a href="#">Dropdown 4</a></li>
+              <li><a href="{{ route('info.history') }}">Sejarah Kuliner</a></li>
+              <li><a href="{{ route('info.specialties') }}">Kuliner Khas</a></li>
             </ul>
           </li>
           <li><a href="#contact">Contact</a></li>
@@ -80,9 +59,14 @@
 
       <div class="d-flex align-items-center gap-3">
         @if ($authUser)
-          <span class="fw-semibold text-dark d-none d-md-inline">Hi, {{ $authUser->name }}</span>
+          <span class="fw-semibold text-dark d-none d-md-inline">Hi, {{ \Illuminate\Support\Str::of($authUser->name)->explode(' ')->first() }}</span>
+          <form method="POST" action="{{ route('logout') }}" class="m-0">
+            @csrf
+            <button type="submit" class="btn-getstarted border-0">Logout</button>
+          </form>
+        @else
+          <a class="btn-getstarted" href="{{ route('login') }}">Login/Register</a>
         @endif
-        <a class="btn-getstarted" href="{{ route('login') }}">Login/Register</a>
       </div>
 
     </div>
@@ -99,8 +83,7 @@
             <h1 data-aos="fade-up">Menyelami<br>Cita Rasa Samawa</h1>
             <p data-aos="fade-up" data-aos-delay="100">Eksplorasi kuliner khas Sumbawa yang lahir dari budaya, alam, dan tradisi masyarakat Samawa.</p>
             <div class="d-flex" data-aos="fade-up" data-aos-delay="200">
-              <a href="#book-a-table" class="btn-get-started">Jelajahi Kuliner</a>
-              <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox btn-watch-video d-flex align-items-center"><i class="bi bi-play-circle"></i><span>Watch Video</span></a>
+              <a href="#menu" class="btn-get-started">Jelajahi Kuliner</a>
             </div>
           </div>
           <div class="col-lg-5 order-1 order-lg-2 hero-img" data-aos="zoom-out">
@@ -146,7 +129,6 @@
 
               <div class="position-relative mt-4">
                 <img src="assets/img/about-2.jpg" class="img-fluid" alt="">
-                <a href="https://www.youtube.com/watch?v=Y7f98aduVJ8" class="glightbox pulsating-play-btn"></a>
               </div>
             </div>
           </div>
@@ -166,20 +148,22 @@
       <!-- Why Box -->
       <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
         <div class="why-box">
-          <h3>Why Cita Rasa Samawa?</h3>
+          <h3>{{ $whySection['title'] ?? $whySection->title }}</h3>
           <p>
-            Cita Rasa Samawa hadir sebagai platform digital yang mengangkat
-            kekayaan kuliner khas Sumbawa secara autentik dan informatif.
-            Website ini dirancang untuk menjadi jembatan antara budaya lokal,
-            pelaku kuliner, dan masyarakat luas dalam mengenal serta
-            melestarikan cita rasa asli Samawa.
+            {{ $whySection['description'] ?? $whySection->description }}
           </p>
-          <div class="text-center">
-            <a href="#about" class="more-btn">
-              <span>Pelajari Lebih Lanjut</span>
-              <i class="bi bi-chevron-right"></i>
-            </a>
-          </div>
+          @php
+            $whyButtonLabel = $whySection['button_label'] ?? $whySection->button_label ?? null;
+            $whyButtonLink = $whySection['button_link'] ?? $whySection->button_link ?? null;
+          @endphp
+          @if ($whyButtonLabel && $whyButtonLink)
+            <div class="text-center">
+              <a href="{{ $whyButtonLink }}" class="more-btn">
+                <span>{{ $whyButtonLabel }}</span>
+                <i class="bi bi-chevron-right"></i>
+              </a>
+            </div>
+          @endif
         </div>
       </div>
       <!-- End Why Box -->
@@ -187,44 +171,17 @@
       <div class="col-lg-8 d-flex align-items-stretch">
         <div class="row gy-4" data-aos="fade-up" data-aos-delay="200">
 
-          <!-- Icon Box 1 -->
-          <div class="col-xl-4">
-            <div class="icon-box d-flex flex-column justify-content-center align-items-center">
-              <i class="bi bi-clipboard-data"></i>
-              <h4>Informasi Terpusat</h4>
-              <p>
-                Menyajikan informasi kuliner khas Sumbawa dalam satu platform
-                yang rapi, mudah diakses, dan terpercaya.
-              </p>
+          @foreach ($whyItems as $index => $item)
+            <div class="col-xl-4" data-aos="fade-up" data-aos-delay="{{ 200 + ($index * 100) }}">
+              <div class="icon-box d-flex flex-column justify-content-center align-items-center">
+                <i class="{{ $item['icon_class'] ?? $item->icon_class }}"></i>
+                <h4>{{ $item['title'] ?? $item->title }}</h4>
+                <p>
+                  {{ $item['description'] ?? $item->description }}
+                </p>
+              </div>
             </div>
-          </div>
-          <!-- End Icon Box -->
-
-          <!-- Icon Box 2 -->
-          <div class="col-xl-4" data-aos="fade-up" data-aos-delay="300">
-            <div class="icon-box d-flex flex-column justify-content-center align-items-center">
-              <i class="bi bi-gem"></i>
-              <h4>Autentik & Berbudaya</h4>
-              <p>
-                Mengangkat kuliner asli yang lahir dari tradisi dan kearifan
-                lokal masyarakat Samawa.
-              </p>
-            </div>
-          </div>
-          <!-- End Icon Box -->
-
-          <!-- Icon Box 3 -->
-          <div class="col-xl-4" data-aos="fade-up" data-aos-delay="400">
-            <div class="icon-box d-flex flex-column justify-content-center align-items-center">
-              <i class="bi bi-inboxes"></i>
-              <h4>Dukungan UMKM Lokal</h4>
-              <p>
-                Mendukung promosi pelaku usaha kuliner dan UMKM daerah agar
-                lebih dikenal di era digital.
-              </p>
-            </div>
-          </div>
-          <!-- End Icon Box -->
+          @endforeach
 
         </div>
       </div>
@@ -244,53 +201,17 @@
 
     <div class="row gy-4">
 
-      <!-- Stat 1 -->
-      <div class="col-lg-3 col-md-6">
-        <div class="stats-item text-center w-100 h-100">
-          <span data-purecounter-start="0"
-                data-purecounter-end="25"
-                data-purecounter-duration="1"
-                class="purecounter"></span>
-          <p>Kuliner Khas</p>
+      @foreach ($stats as $stat)
+        <div class="col-lg-3 col-md-6">
+          <div class="stats-item text-center w-100 h-100">
+            <span data-purecounter-start="0"
+                  data-purecounter-end="{{ $stat['value'] ?? $stat->value }}"
+                  data-purecounter-duration="1"
+                  class="purecounter"></span>
+            <p>{{ $stat['label'] ?? $stat->label }}</p>
+          </div>
         </div>
-      </div>
-      <!-- End Stats Item -->
-
-      <!-- Stat 2 -->
-      <div class="col-lg-3 col-md-6">
-        <div class="stats-item text-center w-100 h-100">
-          <span data-purecounter-start="0"
-                data-purecounter-end="18"
-                data-purecounter-duration="1"
-                class="purecounter"></span>
-          <p>UMKM Kuliner</p>
-        </div>
-      </div>
-      <!-- End Stats Item -->
-
-      <!-- Stat 3 -->
-      <div class="col-lg-3 col-md-6">
-        <div class="stats-item text-center w-100 h-100">
-          <span data-purecounter-start="0"
-                data-purecounter-end="10"
-                data-purecounter-duration="1"
-                class="purecounter"></span>
-          <p>Tokoh Kuliner</p>
-        </div>
-      </div>
-      <!-- End Stats Item -->
-
-      <!-- Stat 4 -->
-      <div class="col-lg-3 col-md-6">
-        <div class="stats-item text-center w-100 h-100">
-          <span data-purecounter-start="0"
-                data-purecounter-end="1200"
-                data-purecounter-duration="1"
-                class="purecounter"></span>
-          <p>Pengunjung Website</p>
-        </div>
-      </div>
-      <!-- End Stats Item -->
+      @endforeach
 
     </div>
 
@@ -633,7 +554,12 @@
       <div class="container" data-aos="fade-up" data-aos-delay="100">
 
         <div class="mb-5">
-          <iframe style="width: 100%; height: 400px;" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12097.433213460943!2d-74.0062269!3d40.7101282!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xb89d1fe6bc499443!2sDowntown+Conference+Center!5e0!3m2!1smk!2sbg!4v1539943755621" frameborder="0" allowfullscreen=""></iframe>
+          <iframe class="w-100 border-0 rounded-4 shadow-sm" style="height: 400px;" src="https://www.google.com/maps?q=Sumbawa,+Nusa+Tenggara+Barat,+Indonesia&output=embed" allowfullscreen="" loading="lazy"></iframe>
+          <div class="mt-3 text-center">
+            <a href="https://www.google.com/maps?q=Sumbawa,+Nusa+Tenggara+Barat,+Indonesia" target="_blank" rel="noopener noreferrer" class="btn-get-started">
+              Buka di Google Maps
+            </a>
+          </div>
         </div><!-- End Google Maps -->
 
         <div class="row gy-4">
@@ -643,7 +569,7 @@
               <i class="icon bi bi-geo-alt flex-shrink-0"></i>
               <div>
                 <h3>Address</h3>
-                <p>A108 Adam Street, New York, NY 535022</p>
+                <p>Sumbawa</p>
               </div>
             </div>
           </div><!-- End Info Item -->
@@ -652,8 +578,8 @@
             <div class="info-item d-flex align-items-center" data-aos="fade-up" data-aos-delay="300">
               <i class="icon bi bi-telephone flex-shrink-0"></i>
               <div>
-                <h3>Call Us</h3>
-                <p>+1 5589 55488 55</p>
+                <h3>WhatsApp</h3>
+                <p>0812 4788 9969</p>
               </div>
             </div>
           </div><!-- End Info Item -->
@@ -662,8 +588,8 @@
             <div class="info-item d-flex align-items-center" data-aos="fade-up" data-aos-delay="400">
               <i class="icon bi bi-envelope flex-shrink-0"></i>
               <div>
-                <h3>Email Us</h3>
-                <p>info@example.com</p>
+                <h3>Email</h3>
+                <p>atsirdafa.nusa22@gmail.com</p>
               </div>
             </div>
           </div><!-- End Info Item -->
@@ -673,42 +599,44 @@
               <i class="icon bi bi-clock flex-shrink-0"></i>
               <div>
                 <h3>Opening Hours<br></h3>
-                <p><strong>Mon-Sat:</strong> 11AM - 23PM; <strong>Sunday:</strong> Closed</p>
+                <p>07.00 - 22.00</p>
               </div>
             </div>
           </div><!-- End Info Item -->
 
         </div>
 
-        <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="600">
-          <div class="row gy-4">
-
-            <div class="col-md-6">
-              <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
+        <div class="php-email-form" data-aos="fade-up" data-aos-delay="600">
+          @if ($authUser)
+            <form id="contactForm" class="row gy-4">
+              <div class="col-md-6">
+                <input type="text" id="contactName" name="name" class="form-control" placeholder="Nama" value="{{ $authUser->name }}" required>
+              </div>
+              <div class="col-md-6">
+                <input type="email" id="contactEmail" name="email" class="form-control" placeholder="Email" value="{{ $authUser->email }}" required>
+              </div>
+              <div class="col-md-12">
+                <input type="text" id="contactSubject" name="subject" class="form-control" placeholder="Subject" required>
+              </div>
+              <div class="col-md-12">
+                <textarea id="contactMessage" name="message" class="form-control" rows="6" placeholder="Message" required></textarea>
+              </div>
+              <div class="col-md-12 text-center d-flex flex-column flex-md-row justify-content-center gap-3">
+                <button type="button" class="btn-getstarted bg-danger text-white" data-contact-action="gmail">
+                  Kirim via Gmail
+                </button>
+                <button type="button" class="btn-getstarted bg-success text-white" data-contact-action="whatsapp">
+                  Kirim via WhatsApp
+                </button>
+              </div>
+            </form>
+          @else
+            <div class="text-center">
+              <p class="mb-3">Silakan login untuk mengirim pesan.</p>
+              <a href="{{ route('login') }}" class="btn-get-started">Login</a>
             </div>
-
-            <div class="col-md-6 ">
-              <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
-            </div>
-
-            <div class="col-md-12">
-              <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
-            </div>
-
-            <div class="col-md-12">
-              <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
-            </div>
-
-            <div class="col-md-12 text-center">
-              <div class="loading">Loading</div>
-              <div class="error-message"></div>
-              <div class="sent-message">Your message has been sent. Thank you!</div>
-
-              <button type="submit">Send Message</button>
-            </div>
-
-          </div>
-        </form><!-- End Contact Form -->
+          @endif
+        </div><!-- End Contact Form -->
 
       </div>
 
@@ -781,8 +709,8 @@
           <i class="bi bi-geo-alt icon"></i>
           <div class="address">
             <h4>Address</h4>
-            <p>A108 Adam Street</p>
-            <p>New York, NY 535022</p>
+            <p>Sumbawa, Nusa Tenggara</p>
+            <p>Indonesia, 19990</p>
             <p></p>
           </div>
 
@@ -793,8 +721,8 @@
           <div>
             <h4>Contact</h4>
             <p>
-              <strong>Phone:</strong> <span>+1 5589 55488 55</span><br>
-              <strong>Email:</strong> <span>info@example.com</span><br>
+              <strong>Phone:</strong> <span>081247889969</span><br>
+              <strong>Email:</strong> <span>citarasasamawa@gmail.com</span><br>
             </p>
           </div>
         </div>
@@ -802,16 +730,16 @@
         <div class="col-lg-3 col-md-6 d-flex">
           <i class="bi bi-clock icon"></i>
           <div>
-            <h4>Opening Hours</h4>
+            <h4>Waktu Buka</h4>
             <p>
-              <strong>Mon-Sat:</strong> <span>11AM - 23PM</span><br>
-              <strong>Sunday</strong>: <span>Closed</span>
+              <strong>Senin-Sabtu:</strong> <span>11AM - 23PM</span><br>
+              <strong>Minggu</strong>: <span>Tutup</span>
             </p>
           </div>
         </div>
 
         <div class="col-lg-3 col-md-6">
-          <h4>Follow Us</h4>
+          <h4>Ikuti Kami</h4>
           <div class="social-links d-flex">
             <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
             <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
@@ -824,13 +752,13 @@
     </div>
 
     <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">Yummy</strong> <span>All Rights Reserved</span></p>
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Cita Rasa Samawa</strong> <span>All Rights Reserved</span></p>
       <div class="credits">
         <!-- All the links in the footer should remain intact. -->
         <!-- You can delete the links only if you've purchased the pro version. -->
         <!-- Licensing information: https://bootstrapmade.com/license/ -->
         <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-        Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+        Designed by <a href="https://bootstrapmade.com/">CitaRasaSamawa</a>
       </div>
     </div>
 
@@ -853,6 +781,55 @@
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
 
+  <script>
+    const contactForm = document.getElementById('contactForm');
+
+    if (contactForm) {
+      const getValue = (id) => {
+        const field = document.getElementById(id);
+        return field ? field.value.trim() : '';
+      };
+
+      const buildPayload = () => ({
+        name: getValue('contactName'),
+        email: getValue('contactEmail'),
+        subject: getValue('contactSubject'),
+        message: getValue('contactMessage'),
+      });
+
+      const buildText = (payload) => {
+        return `Nama: ${payload.name}
+Email: ${payload.email}
+Subjek: ${payload.subject}
+
+${payload.message}`;
+      };
+
+      const buttons = document.querySelectorAll('[data-contact-action]');
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const payload = buildPayload();
+          if (!payload.name || !payload.email || !payload.subject || !payload.message) {
+            alert('Lengkapi form terlebih dahulu.');
+            return;
+          }
+
+          const subject = encodeURIComponent(payload.subject);
+          const body = encodeURIComponent(buildText(payload));
+
+          if (button.dataset.contactAction === 'gmail') {
+            window.location.href = `mailto:atsirdafa.nusa22@gmail.com?subject=${subject}&body=${body}`;
+            return;
+          }
+
+          const text = encodeURIComponent(buildText(payload));
+          window.open(`https://wa.me/6281247889969?text=${text}`, '_blank');
+        });
+      });
+    }
+  </script>
+
 </body>
+
 
 </html>

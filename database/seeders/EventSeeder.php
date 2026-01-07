@@ -7,16 +7,13 @@ use Illuminate\Database\Seeder;
 
 class EventSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         Event::updateOrCreate(
-            ['title' => 'Custom Parties'],
+            ['title' => 'Festival Bale Berdaya'],
             [
-                'price_label' => '$99',
-                'description' => 'Quo corporis voluptas ea ad. Consectetur inventore sapiente ipsum voluptas eos omnis facere. Enim facilis veritatis id est rem repudiandae nulla expedita quas.',
+                'price_label' => 'Rp250.000',
+                'description' => 'Festival UMKM dan kebudayaan lokal Sumbawa dengan pameran produk, lomba tradisional, dan hiburan rakyat.',
                 'image_path' => 'assets/img/events-1.jpg',
                 'sort_order' => 1,
                 'is_active' => true,
@@ -24,10 +21,10 @@ class EventSeeder extends Seeder
         );
 
         Event::updateOrCreate(
-            ['title' => 'Private Parties'],
+            ['title' => 'Moyo Festival'],
             [
-                'price_label' => '$289',
-                'description' => 'In delectus sint qui et enim. Et ab repudiandae inventore quaerat doloribus. Facere nemo vero est ut dolores ea assumenda et. Delectus saepe accusamus aspernatur.',
+                'price_label' => 'Rp350.000',
+                'description' => 'Festival budaya dan parade seni di Pulau Moyo menampilkan tari tradisional, drum band, dan expo UMKM.',
                 'image_path' => 'assets/img/events-2.jpg',
                 'sort_order' => 2,
                 'is_active' => true,
@@ -35,10 +32,10 @@ class EventSeeder extends Seeder
         );
 
         Event::updateOrCreate(
-            ['title' => 'Birthday Parties'],
+            ['title' => 'Barapan Kebo'],
             [
-                'price_label' => '$499',
-                'description' => 'Laborum aperiam atque omnis minus omnis est qui assumenda quos. Quis id sit quibusdam. Esse quisquam ducimus officia ipsum ut quibusdam maxime. Non enim perspiciatis.',
+                'price_label' => 'Rp75.000',
+                'description' => 'Tradisi balap kerbau khas Sumbawa: kompetisi antar tim kerbau yang seru dan penuh semangat budaya.',
                 'image_path' => 'assets/img/events-3.jpg',
                 'sort_order' => 3,
                 'is_active' => true,
@@ -46,10 +43,10 @@ class EventSeeder extends Seeder
         );
 
         Event::updateOrCreate(
-            ['title' => 'Wedding Parties'],
+            ['title' => 'Konser Apung Spirit of The Sea'],
             [
-                'price_label' => '$899',
-                'description' => 'Laborum aperiam atque omnis minus omnis est qui assumenda quos. Quis id sit quibusdam. Esse quisquam ducimus officia ipsum ut quibusdam maxime. Non enim perspiciatis.',
+                'price_label' => 'Rp150.000',
+                'description' => 'Konser budaya di atas laut Pulau Bungin menampilkan pertunjukan seni dan musik laut yang unik.',
                 'image_path' => 'assets/img/events-4.jpg',
                 'sort_order' => 4,
                 'is_active' => true,

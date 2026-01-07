@@ -6,18 +6,28 @@ use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\StoreGalleryRequest;
 use App\Http\Requests\StoreMenuCategoryRequest;
 use App\Http\Requests\StoreMenuItemRequest;
+use App\Http\Requests\StoreSiteStatRequest;
 use App\Http\Requests\StoreUmkmRequest;
+use App\Http\Requests\StoreWhyItemRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Http\Requests\UpdateGalleryRequest;
 use App\Http\Requests\UpdateMenuCategoryRequest;
+use App\Http\Requests\UpdateMenuFavoriteRequest;
 use App\Http\Requests\UpdateMenuItemRequest;
+use App\Http\Requests\UpdateSiteStatRequest;
 use App\Http\Requests\UpdateUmkmRequest;
+use App\Http\Requests\UpdateWhyItemRequest;
+use App\Http\Requests\UpdateWhySectionRequest;
 use App\Models\Event;
 use App\Models\Gallery;
 use App\Models\MenuCategory;
+use App\Models\MenuFavorite;
 use App\Models\MenuItem;
+use App\Models\SiteStat;
 use App\Models\Testimonial;
 use App\Models\Umkm;
+use App\Models\WhyItem;
+use App\Models\WhySection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
@@ -57,6 +67,10 @@ class AdminMenuController extends Controller
             ->latest()
             ->get();
 
+        $favoriteItemIds = MenuFavorite::query()
+            ->pluck('menu_item_id')
+            ->all();
+
         return response()->view('admin.dashboard', [
             'categories' => $categories,
             'items' => $items,
@@ -64,6 +78,14 @@ class AdminMenuController extends Controller
             'events' => $events,
             'galleries' => $galleries,
             'testimonials' => $testimonials,
+            'favoriteItemIds' => $favoriteItemIds,
+            'stats' => SiteStat::query()
+                ->orderBy('sort_order')
+                ->get(),
+            'whySection' => WhySection::query()->latest()->first(),
+            'whyItems' => WhyItem::query()
+                ->orderBy('sort_order')
+                ->get(),
         ]);
     }
 
@@ -408,5 +430,151 @@ class AdminMenuController extends Controller
         return redirect()
             ->back()
             ->with('status', 'Testimoni berhasil dihapus.');
+    }
+
+    public function updateFavorites(UpdateMenuFavoriteRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+        $selectedIds = $validated['menu_item_ids'] ?? [];
+
+        if (count($selectedIds) === 0) {
+            MenuFavorite::query()->delete();
+        } else {
+            MenuFavorite::query()
+                ->whereNotIn('menu_item_id', $selectedIds)
+                ->delete();
+        }
+
+        $existingIds = MenuFavorite::query()
+            ->pluck('menu_item_id')
+            ->all();
+
+        $newIds = array_diff($selectedIds, $existingIds);
+        $rows = array_map(static function (int $menuItemId): array {
+            return [
+                'menu_item_id' => $menuItemId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }, $newIds);
+
+        if ($rows !== []) {
+            MenuFavorite::query()->insert($rows);
+        }
+
+        return redirect()
+            ->back()
+            ->with('status', 'Menu favorit berhasil diperbarui.');
+    }
+
+    public function storeStat(StoreSiteStatRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        SiteStat::create([
+            'key' => Str::slug($validated['label']),
+            'label' => $validated['label'],
+            'value' => $validated['value'],
+            'sort_order' => $validated['sort_order'] ?? 0,
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('status', 'Statistik berhasil ditambahkan.');
+    }
+
+    public function updateStats(UpdateSiteStatRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        foreach ($validated['stats'] as $statData) {
+            SiteStat::query()
+                ->whereKey($statData['id'])
+                ->update([
+                    'label' => $statData['label'],
+                    'value' => $statData['value'],
+                    'sort_order' => $statData['sort_order'] ?? 0,
+                ]);
+        }
+
+        return redirect()
+            ->back()
+            ->with('status', 'Statistik berhasil diperbarui.');
+    }
+
+    public function destroyStat(SiteStat $stat): RedirectResponse
+    {
+        $stat->delete();
+
+        return redirect()
+            ->back()
+            ->with('status', 'Statistik berhasil dihapus.');
+    }
+
+    public function updateWhySection(UpdateWhySectionRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        WhySection::updateOrCreate(
+            ['id' => $request->input('id')],
+            [
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'button_label' => $validated['button_label'] ?? null,
+                'button_link' => $validated['button_link'] ?? null,
+                'is_active' => $request->boolean('is_active'),
+            ]
+        );
+
+        return redirect()
+            ->back()
+            ->with('status', 'Why Cita Rasa Samawa berhasil diperbarui.');
+    }
+
+    public function storeWhyItem(StoreWhyItemRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        WhyItem::create([
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'icon_class' => $validated['icon_class'],
+            'sort_order' => $validated['sort_order'] ?? 0,
+            'is_active' => $request->boolean('is_active'),
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('status', 'Item Why berhasil ditambahkan.');
+    }
+
+    public function updateWhyItems(UpdateWhyItemRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        foreach ($validated['items'] as $item) {
+            WhyItem::query()
+                ->whereKey($item['id'])
+                ->update([
+                    'title' => $item['title'],
+                    'description' => $item['description'],
+                    'icon_class' => $item['icon_class'],
+                    'sort_order' => $item['sort_order'] ?? 0,
+                    'is_active' => (bool) ($item['is_active'] ?? false),
+                ]);
+        }
+
+        return redirect()
+            ->back()
+            ->with('status', 'Item Why berhasil diperbarui.');
+    }
+
+    public function destroyWhyItem(WhyItem $whyItem): RedirectResponse
+    {
+        $whyItem->delete();
+
+        return redirect()
+            ->back()
+            ->with('status', 'Item Why berhasil dihapus.');
     }
 }

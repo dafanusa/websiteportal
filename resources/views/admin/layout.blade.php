@@ -37,14 +37,15 @@
 </head>
 <body class="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(122,12,46,0.14),_#ffffff_55%,_#ffffff_100%)] text-slate-900">
   <div class="min-h-screen lg:flex">
-    <aside class="relative w-full lg:w-72 bg-white/90 border-r border-[#e6d5dc] p-6 backdrop-blur">
+    <aside class="relative w-full lg:w-72 bg-white/90 border-r border-[#e6d5dc] p-6 backdrop-blur lg:sticky lg:top-0 lg:h-screen">
       <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(122,12,46,0.1),_transparent_65%)]"></div>
-      <div class="relative float-in">
+      <div class="relative flex h-full min-h-0 flex-col">
+        <div class="float-in">
         <p class="text-xs uppercase tracking-[0.4em] text-[#7a0c2e]">Admin Suite</p>
         <h1 class="mt-3 text-2xl font-extrabold text-[#3f0818]">Cita Rasa Samawa</h1>
         <p class="mt-2 text-sm text-slate-600">Halo, {{ auth()->user()->name }}</p>
       </div>
-      <nav class="relative mt-10 space-y-3 text-sm">
+      <nav class="mt-10 flex-1 min-h-0 space-y-3 overflow-y-auto pr-2 text-sm">
         <a href="{{ route('dashboard.items.data') }}"
           class="nav-sheen relative flex items-center gap-3 rounded-2xl px-4 py-3 font-semibold transition hover:bg-[#f7edf0] {{ request()->routeIs('dashboard.items.data') ? 'bg-white text-[#7a0c2e] shadow-sm' : 'text-slate-700' }}">
           <span class="h-9 w-9 rounded-full bg-[#f5e6eb] text-center leading-9 text-[#7a0c2e]">1</span>
@@ -66,14 +67,15 @@
           Tambah Menu
         </a>
       </nav>
-      <form method="POST" action="{{ route('logout') }}" class="relative mt-10">
+      <form method="POST" action="{{ route('logout') }}" class="mt-10">
         @csrf
         <button type="submit" class="w-full rounded-2xl border border-[#e6d5dc] bg-[#f5e6eb] px-4 py-3 text-sm font-semibold text-[#7a0c2e] transition hover:bg-[#f0dbe2]">
           Logout
         </button>
       </form>
-      <div class="relative mt-6 text-xs text-slate-500">
+      <div class="mt-6 text-xs text-slate-500">
         © {{ date('Y') }} Cita Rasa Samawa
+      </div>
       </div>
     </aside>
 

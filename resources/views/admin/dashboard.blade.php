@@ -4,13 +4,22 @@
 
 @section('content')
   <div class="flex min-h-screen bg-gray-50">
-    <aside class="w-64 bg-white shadow-lg flex flex-col border-r border-gray-100">
+    <aside class="w-64 bg-white shadow-lg flex flex-col border-r border-gray-100 lg:sticky lg:top-0 lg:h-screen">
       <div class="p-6 border-b">
         <h1 class="text-2xl font-bold text-maroon">Admin Panel</h1>
       </div>
-      <nav class="flex-1 px-4 py-6 space-y-2">
+      <nav class="flex-1 min-h-0 overflow-y-auto px-4 py-6 space-y-2 pr-2">
         <button id="nav-menu" onclick="showSection('menu')" class="w-full text-left px-4 py-3 rounded-xl text-slate-700 hover:bg-maroon hover:text-white transition duration-300">
           Menu Makanan
+        </button>
+        <button id="nav-favorit" onclick="showSection('favorit')" class="w-full text-left px-4 py-3 rounded-xl text-slate-700 hover:bg-maroon hover:text-white transition duration-300">
+          Menu Favorit
+        </button>
+        <button id="nav-statistik" onclick="showSection('statistik')" class="w-full text-left px-4 py-3 rounded-xl text-slate-700 hover:bg-maroon hover:text-white transition duration-300">
+          Statistik
+        </button>
+        <button id="nav-why" onclick="showSection('why')" class="w-full text-left px-4 py-3 rounded-xl text-slate-700 hover:bg-maroon hover:text-white transition duration-300">
+          Why Cita Rasa
         </button>
         <button id="nav-kategori" onclick="showSection('kategori')" class="w-full text-left px-4 py-3 rounded-xl text-slate-700 hover:bg-maroon hover:text-white transition duration-300">
           Data Kategori
@@ -109,6 +118,263 @@
           @empty
             <div class="bg-white rounded-2xl shadow p-6 text-center text-gray-500">Belum ada menu.</div>
           @endforelse
+        </div>
+      </section>
+
+      <section id="section-favorit" class="mt-10 hidden space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <h2 class="text-2xl font-semibold text-slate-800">Menu Favorit</h2>
+          <button type="submit" form="favoriteForm" class="bg-maroon px-5 py-2 text-white rounded-full hover-maroon transition duration-300">
+            Simpan Favorit
+          </button>
+        </div>
+        @php
+          $itemsByCategory = $items->groupBy('menu_category_id');
+        @endphp
+        <form id="favoriteForm" method="POST" action="{{ route('dashboard.favorites.update') }}" class="space-y-6">
+          @csrf
+          @method('PUT')
+          @forelse ($categories as $category)
+            @php
+              $categoryItems = $itemsByCategory->get($category->id, collect());
+            @endphp
+            <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-md">
+              <h3 class="text-lg font-semibold text-maroon">{{ $category->name }}</h3>
+              <p class="text-sm text-gray-500">{{ $category->heading ?? 'Tanpa heading' }}</p>
+              <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                @forelse ($categoryItems as $item)
+                  <label class="flex gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4">
+                    <input
+                      type="checkbox"
+                      name="menu_item_ids[]"
+                      value="{{ $item->id }}"
+                      class="mt-1 h-4 w-4 rounded"
+                      @checked(in_array($item->id, $favoriteItemIds, true))
+                    >
+                    <div>
+                      <p class="font-semibold text-slate-800">{{ $item->name }}</p>
+                      <p class="text-sm text-gray-500">Rp {{ number_format($item->price, 0, ',', '.') }}</p>
+                      <p class="text-xs text-gray-400">{{ $item->is_active ? 'Aktif' : 'Nonaktif' }}</p>
+                    </div>
+                  </label>
+                @empty
+                  <div class="col-span-full rounded-xl border border-dashed border-gray-200 p-4 text-center text-sm text-gray-500">
+                    Belum ada menu pada kategori ini.
+                  </div>
+                @endforelse
+              </div>
+            </div>
+          @empty
+            <div class="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-500">
+              Belum ada kategori menu.
+            </div>
+          @endforelse
+        </form>
+      </section>
+
+      <section id="section-statistik" class="mt-10 hidden space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <h2 class="text-2xl font-semibold text-slate-800">Statistik</h2>
+          <button type="submit" form="statsForm" class="bg-maroon px-5 py-2 text-white rounded-full hover-maroon transition duration-300">
+            Simpan Statistik
+          </button>
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-3">
+          <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-md lg:col-span-2">
+            <form id="statsForm" method="POST" action="{{ route('dashboard.stats.update') }}" class="space-y-4">
+              @csrf
+              @method('PUT')
+              @forelse ($stats as $stat)
+                <div class="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                  <div class="flex flex-wrap items-center justify-between gap-3">
+                    <h3 class="font-semibold text-slate-800">{{ $stat->label }}</h3>
+                    <button type="submit" form="delete-stat-{{ $stat->id }}" class="text-sm text-red-600 hover:text-red-700">
+                      Hapus
+                    </button>
+                  </div>
+                  <div class="mt-4 grid gap-3 md:grid-cols-3">
+                    <input type="hidden" name="stats[{{ $loop->index }}][id]" value="{{ $stat->id }}">
+                    <div>
+                      <label class="text-xs text-gray-500">Label</label>
+                      <input type="text" name="stats[{{ $loop->index }}][label]" value="{{ $stat->label }}" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm">
+                    </div>
+                    <div>
+                      <label class="text-xs text-gray-500">Nilai</label>
+                      <input type="number" name="stats[{{ $loop->index }}][value]" value="{{ $stat->value }}" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm">
+                    </div>
+                    <div>
+                      <label class="text-xs text-gray-500">Urutan</label>
+                      <input type="number" name="stats[{{ $loop->index }}][sort_order]" value="{{ $stat->sort_order }}" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm">
+                    </div>
+                  </div>
+                </div>
+              @empty
+                <div class="rounded-xl border border-dashed border-gray-200 p-4 text-center text-sm text-gray-500">
+                  Belum ada data statistik.
+                </div>
+              @endforelse
+            </form>
+            @foreach ($stats as $stat)
+              <form id="delete-stat-{{ $stat->id }}" method="POST" action="{{ route('dashboard.stats.destroy', $stat) }}">
+                @csrf
+                @method('DELETE')
+              </form>
+            @endforeach
+          </div>
+
+          <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-md">
+            <h3 class="text-lg font-semibold text-slate-800">Tambah Statistik</h3>
+            <form method="POST" action="{{ route('dashboard.stats.store') }}" class="mt-4 space-y-3">
+              @csrf
+              <div>
+                <label class="text-xs text-gray-500">Label</label>
+                <input type="text" name="label" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" required>
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Nilai</label>
+                <input type="number" name="value" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" required>
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Urutan</label>
+                <input type="number" name="sort_order" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" value="0">
+              </div>
+              <button type="submit" class="bg-maroon px-4 py-2 text-white rounded-full hover-maroon transition duration-300">
+                Tambah
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="section-why" class="mt-10 hidden space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <h2 class="text-2xl font-semibold text-slate-800">Why Cita Rasa Samawa</h2>
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-3">
+          <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-md lg:col-span-2">
+            <h3 class="text-lg font-semibold text-slate-800">Konten Utama</h3>
+            <form method="POST" action="{{ route('dashboard.why-section.update') }}" class="mt-4 space-y-4">
+              @csrf
+              @method('PUT')
+              <input type="hidden" name="id" value="{{ $whySection?->id }}">
+              <div>
+                <label class="text-xs text-gray-500">Judul</label>
+                <input type="text" name="title" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" value="{{ $whySection?->title ?? 'Why Cita Rasa Samawa?' }}" required>
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Deskripsi</label>
+                <textarea name="description" rows="5" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" required>{{ $whySection?->description ?? 'Cita Rasa Samawa hadir sebagai platform digital yang mengangkat kekayaan kuliner khas Sumbawa secara autentik dan informatif. Website ini dirancang untuk menjadi jembatan antara budaya lokal, pelaku kuliner, dan masyarakat luas dalam mengenal serta melestarikan cita rasa asli Samawa.' }}</textarea>
+              </div>
+              <div class="grid gap-3 md:grid-cols-2">
+                <div>
+                  <label class="text-xs text-gray-500">Label Tombol</label>
+                  <input type="text" name="button_label" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" value="{{ $whySection?->button_label ?? 'Pelajari Lebih Lanjut' }}">
+                </div>
+                <div>
+                  <label class="text-xs text-gray-500">Link Tombol</label>
+                  <input type="text" name="button_link" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" value="{{ $whySection?->button_link ?? '#about' }}">
+                </div>
+              </div>
+              <label class="flex items-center gap-2 text-sm text-gray-600">
+                <input type="checkbox" name="is_active" value="1" class="h-4 w-4 rounded" @checked($whySection?->is_active ?? true)>
+                Tampilkan di halaman utama
+              </label>
+              <button type="submit" class="bg-maroon px-5 py-2 text-white rounded-full hover-maroon transition duration-300">
+                Simpan Konten
+              </button>
+            </form>
+          </div>
+
+          <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-md">
+            <h3 class="text-lg font-semibold text-slate-800">Tambah Item</h3>
+            <form method="POST" action="{{ route('dashboard.why-items.store') }}" class="mt-4 space-y-3">
+              @csrf
+              <div>
+                <label class="text-xs text-gray-500">Judul</label>
+                <input type="text" name="title" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" required>
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Deskripsi</label>
+                <textarea name="description" rows="3" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" required></textarea>
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Icon (Bootstrap Icons)</label>
+                <input type="text" name="icon_class" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" value="bi bi-clipboard-data" required>
+              </div>
+              <div>
+                <label class="text-xs text-gray-500">Urutan</label>
+                <input type="number" name="sort_order" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" value="0">
+              </div>
+              <label class="flex items-center gap-2 text-sm text-gray-600">
+                <input type="checkbox" name="is_active" value="1" class="h-4 w-4 rounded" checked>
+                Tampilkan di halaman utama
+              </label>
+              <button type="submit" class="bg-maroon px-4 py-2 text-white rounded-full hover-maroon transition duration-300">
+                Tambah Item
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-md">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <h3 class="text-lg font-semibold text-slate-800">Daftar Item</h3>
+            <button type="submit" form="whyItemsForm" class="bg-maroon px-4 py-2 text-white rounded-full hover-maroon transition duration-300">
+              Simpan Item
+            </button>
+          </div>
+          <form id="whyItemsForm" method="POST" action="{{ route('dashboard.why-items.update') }}" class="mt-4 space-y-4">
+            @csrf
+            @method('PUT')
+            @forelse ($whyItems as $item)
+              <div class="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                  <h4 class="font-semibold text-slate-800">{{ $item->title }}</h4>
+                  <button type="submit" form="delete-why-item-{{ $item->id }}" class="text-sm text-red-600 hover:text-red-700">
+                    Hapus
+                  </button>
+                </div>
+                <input type="hidden" name="items[{{ $loop->index }}][id]" value="{{ $item->id }}">
+                <div class="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+                  <div class="lg:col-span-1">
+                    <label class="text-xs text-gray-500">Judul</label>
+                    <input type="text" name="items[{{ $loop->index }}][title]" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" value="{{ $item->title }}" required>
+                  </div>
+                  <div class="lg:col-span-2">
+                    <label class="text-xs text-gray-500">Deskripsi</label>
+                    <textarea name="items[{{ $loop->index }}][description]" rows="3" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" required>{{ $item->description }}</textarea>
+                  </div>
+                  <div>
+                    <label class="text-xs text-gray-500">Icon</label>
+                    <input type="text" name="items[{{ $loop->index }}][icon_class]" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" value="{{ $item->icon_class }}" required>
+                  </div>
+                  <div>
+                    <label class="text-xs text-gray-500">Urutan</label>
+                    <input type="number" name="items[{{ $loop->index }}][sort_order]" class="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm" value="{{ $item->sort_order }}">
+                  </div>
+                </div>
+                <div class="mt-3">
+                  <input type="hidden" name="items[{{ $loop->index }}][is_active]" value="0">
+                  <label class="flex items-center gap-2 text-sm text-gray-600">
+                    <input type="checkbox" name="items[{{ $loop->index }}][is_active]" value="1" class="h-4 w-4 rounded" @checked($item->is_active)>
+                    Tampilkan di halaman utama
+                  </label>
+                </div>
+              </div>
+            @empty
+              <div class="rounded-xl border border-dashed border-gray-200 p-4 text-center text-sm text-gray-500">
+                Belum ada item Why.
+              </div>
+            @endforelse
+          </form>
+          @foreach ($whyItems as $item)
+            <form id="delete-why-item-{{ $item->id }}" method="POST" action="{{ route('dashboard.why-items.destroy', $item) }}">
+              @csrf
+              @method('DELETE')
+            </form>
+          @endforeach
         </div>
       </section>
 
@@ -462,7 +728,7 @@
 @push('scripts')
 <script>
   function showSection(type) {
-    ['menu', 'kategori', 'umkm', 'event', 'gallery', 'testimoni'].forEach(section => {
+    ['menu', 'favorit', 'statistik', 'why', 'kategori', 'umkm', 'event', 'gallery', 'testimoni'].forEach(section => {
       const target = document.getElementById('section-' + section);
       if (target) {
         target.classList.toggle('hidden', section !== type);
@@ -471,6 +737,9 @@
 
     const navButtons = {
       menu: document.getElementById('nav-menu'),
+      favorit: document.getElementById('nav-favorit'),
+      statistik: document.getElementById('nav-statistik'),
+      why: document.getElementById('nav-why'),
       kategori: document.getElementById('nav-kategori'),
       umkm: document.getElementById('nav-umkm'),
       event: document.getElementById('nav-event'),
